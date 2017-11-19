@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ListCell?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="tw.org.ttc.iot.MainController">
+	<left>
+		<AnchorPane BorderPane.alignment="CENTER">
+			<children>
+				<ListView fx:id="endPointsView" AnchorPane.bottomAnchor="0.0"
+					AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+					AnchorPane.topAnchor="0.0" />
+			</children>
+		</AnchorPane>
+	</left>
+	<center>
+		<AnchorPane BorderPane.alignment="CENTER">
+			<children>
+				<TabPane layoutX="14.0" layoutY="22.0" prefHeight="400.0"
+					prefWidth="290.0" tabClosingPolicy="UNAVAILABLE"
+					AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+					AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+					<tabs>
+						<Tab text="API Info">
+							<content>
+								<AnchorPane>
+									<children>
+										<VBox prefHeight="571.0" prefWidth="556.0"
+											AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+											AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+											<children>
+												<HBox layoutX="14.0" layoutY="7.0" spacing="10.0"
+													AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+													AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+													<children>
+														<Label fx:id="endPointDetailMethodLabel" layoutX="14.0"
+															layoutY="7.0"
+															style="-fx-font-weight: bold; -fx-background-color: orange; -fx-border-radius: 5;"
+															text="METH" />
+														<Label fx:id="endPointDetailUrlLabel" layoutX="60.0"
+															layoutY="7.0" text="URL" />
+														<Label fx:id="endPointDetailSummaryLabel" layoutX="181.0"
+															layoutY="7.0" text="Summary" />
+													</children>
+												</HBox>
+												<VBox>
+													<children>
+														<TableView fx:id="endPointDetailParameterTableView"
+															prefHeight="181.0" prefWidth="534.0">
+															<columns>
+																<TableColumn fx:id="endPointDetailParameterName" prefWidth="-1.0" text="Name" />
+																<TableColumn fx:id="endPointDetailParameterIn" prefWidth="-1.0" text="In" />
+																<TableColumn fx:id="endPointDetailParameterDescription" prefWidth="-1.0" text="Description" />
+																<TableColumn fx:id="endPointDetailParameterVendorExtension" prefWidth="-1.0" text="VendorExtension" />
+															</columns>
+														</TableView>
+														<TableView fx:id="endPointDetailResponseTableView"
+															prefHeight="153.0" prefWidth="494.0">
+															<columns>
+																<TableColumn fx:id="endPointDetailResponseCode"
+																	prefWidth="75.0" text="Code" />
+																<TableColumn fx:id="endPointDetailResponseDescription"
+																	prefWidth="75.0" text="Description" />
+															</columns>
+														</TableView>
+													</children>
+												</VBox>
+											</children>
+										</VBox>
+									</children>
+								</AnchorPane>
+							</content>
+						</Tab>
+						<Tab text="Test Script">
+							<content>
+								<AnchorPane minHeight="0.0" minWidth="0.0"
+									prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<TreeView layoutX="14.0" layoutY="14.0" prefHeight="371.0"
+											prefWidth="290.0" AnchorPane.bottomAnchor="0.0"
+											AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+											AnchorPane.topAnchor="0.0" />
+									</children>
+								</AnchorPane>
+							</content>
+						</Tab>
+					</tabs>
+				</TabPane>
+			</children>
+		</AnchorPane>
+	</center>
+	<top>
+		<MenuBar BorderPane.alignment="CENTER">
+			<menus>
+				<Menu mnemonicParsing="false" text="File">
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#onOpenMenuClicked"
+							text="Open" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+	</top>
+</BorderPane>
