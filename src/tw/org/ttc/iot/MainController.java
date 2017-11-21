@@ -10,6 +10,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -17,11 +19,20 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import tw.org.ttc.iot.model.EndPoint;
+import tw.org.ttc.iot.model.RecursiveTreeItem;
 import tw.org.ttc.iot.model.Response;
+import tw.org.ttc.iot.model.script.AST;
+import tw.org.ttc.iot.model.script.RESTfulRequestAST;
+import tw.org.ttc.iot.model.script.ScriptAST;
 import tw.org.ttc.iot.view.EndPointCell;
+import tw.org.ttc.iot.view.ScriptTreeCell;
 
 public class MainController {
 	@FXML
@@ -50,14 +61,22 @@ public class MainController {
 	@FXML
 	private TableColumn<Response, String> endPointDetailResponseDescription;
 	
+	@FXML
+	private TreeView<AST> scriptView;
+	
 	private ObservableList<EndPoint> endPoints;
 	private ObservableList<Parameter> endPointDetailParameters;
 	private ObservableList<Response> endPointDetailResponses;
+	
+	private TreeItem<AST> script;
+	private ScriptAST rootAST;
 
 	public MainController() {
 		endPoints = FXCollections.observableArrayList();
 		endPointDetailParameters = FXCollections.observableArrayList();
 		endPointDetailResponses = FXCollections.observableArrayList();
+		rootAST = new ScriptAST();
+		script = new RecursiveTreeItem<AST>(rootAST, AST::getChildNodes);
 	}
 
 	@FXML
@@ -65,6 +84,13 @@ public class MainController {
 		init_endpoint_list();
 		init_endpoint_detail_parameter_view();
 		init_endpoint_detail_response_view();
+		scriptView.setRoot(script);
+		scriptView.setCellFactory(new Callback<TreeView<AST>, TreeCell<AST>> () {
+
+			@Override
+			public TreeCell<AST> call(TreeView<AST> arg0) {
+				return new ScriptTreeCell();
+			}});
 	}
 
 	private void init_endpoint_detail_response_view() {
@@ -95,7 +121,15 @@ public class MainController {
 				return new EndPointCell();
 			}
 		});
-		
+		endPointsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getClickCount() < 2) {
+					return;
+				}
+				rootAST.addChildNode(new RESTfulRequestAST(endPointsView.getSelectionModel().getSelectedItem()));
+			}});
 		endPointsView.setItems(endPoints);		
 		endPointsView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EndPoint>() {
 
