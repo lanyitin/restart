@@ -2,6 +2,9 @@ package tw.org.ttc.iot.view;
 
 import java.util.Optional;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
@@ -22,38 +25,6 @@ public class ScriptTreeCell extends TreeCell<AST> {
 
 	public ScriptTreeCell() {
 		super();
-		setOnDragDetected(e -> {
-			System.out.println(String.format("Drag Detected %d", getIndex()));
-			Dragboard db = startDragAndDrop(TransferMode.MOVE);
-			ClipboardContent content = new ClipboardContent();
-			content.put(DataFormat.PLAIN_TEXT, getItem().getTextForTreeCell());
-			db.setContent(content);
-			e.consume();
-		});
-		setOnDragDone(e -> {
-			System.out.println(String.format("Drag Done %d", getIndex()));
-			e.consume();
-		});
-		setOnDragDropped(e -> {
-			System.out.println(String.format("Drag Dropped %d", getIndex()));
-			e.setDropCompleted(true);
-			e.consume();
-		});
-		setOnDragEntered(e -> {
-			setText(e.getDragboard().getString());
-			System.out.println(String.format("Drag Entered %d", getIndex()));
-			e.consume();
-		});
-		setOnDragExited(e -> {
-			setText(getItem().getTextForTreeCell());
-			System.out.println(String.format("Drag Exit %d", getIndex()));
-			e.consume();
-		});
-		setOnDragOver(e -> {
-			e.acceptTransferModes(TransferMode.ANY);
-			System.out.println(String.format("Drag Over %d", getIndex()));
-			e.consume();
-		});
 	}
 
 	@Override
@@ -98,29 +69,52 @@ public class ScriptTreeCell extends TreeCell<AST> {
 						}
 					});
 					contextMenu.getItems().add(item2);
-				} else {
-					if (item instanceof SleepAST) {
-						SleepAST ast_item = (SleepAST) item;
+				} else if (item instanceof SleepAST) {
+					SleepAST ast_item = (SleepAST) item;
+					MenuItem item2 = new MenuItem("Edit");
+					item2.setOnAction(new EventHandler<ActionEvent>() {
+
+						@Override
+						public void handle(ActionEvent event) {
+							TextInputDialog dialog = new TextInputDialog(String.valueOf(ast_item.getDuration()));
+							dialog.setTitle("How long would you like?");
+							dialog.setContentText("The duration(ms):");
+
+							// Traditional way to get the response value.
+							Optional<String> result = dialog.showAndWait();
+							if (result.isPresent()) {
+								ast_item.setDuration(Integer.valueOf(result.get()));
+								setText(item.getTextForTreeCell());
+							}
+						}
+					});
+					contextMenu.getItems().add(item2);
+				} else if (item instanceof RESTfulRequestAST) {
+						RESTfulRequestAST ast_item = (RESTfulRequestAST) item;
 						MenuItem item2 = new MenuItem("Edit");
 						item2.setOnAction(new EventHandler<ActionEvent>() {
 
 							@Override
 							public void handle(ActionEvent event) {
-								TextInputDialog dialog = new TextInputDialog(String.valueOf(ast_item.getDuration()));
-								dialog.setTitle("How long would you like?");
-								dialog.setContentText("The duration(ms):");
+								String content = "";
+								if (ast_item.getRequest().getParameters() != null) {
+									content = ast_item.getRequest().getParameters().toString();
+								}
+								TextInputDialog dialog = new TextInputDialog(content);
+								dialog.setTitle("the parameters:");
+								dialog.setResizable(true);
 
 								// Traditional way to get the response value.
 								Optional<String> result = dialog.showAndWait();
 								if (result.isPresent()) {
-									ast_item.setDuration(Integer.valueOf(result.get()));
+									JsonParser gson = new JsonParser();
+									ast_item.getRequest().setParameters(gson.parse(result.get()).getAsJsonObject());
 									setText(item.getTextForTreeCell());
 								}
 							}
 						});
 						contextMenu.getItems().add(item2);
 					}
-				}
 				setContextMenu(contextMenu);
 				setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
 					@Override

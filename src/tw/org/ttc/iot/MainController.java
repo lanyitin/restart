@@ -39,6 +39,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import tw.org.ttc.iot.model.EndPoint;
+import tw.org.ttc.iot.model.EndPointRequest;
 import tw.org.ttc.iot.model.RecursiveTreeItem;
 import tw.org.ttc.iot.model.Response;
 import tw.org.ttc.iot.model.script.AST;
@@ -197,7 +198,7 @@ public class MainController {
 				if (event.getClickCount() < 2) {
 					return;
 				}
-				rootAST.addChildNode(new RESTfulRequestAST(endPointsView.getSelectionModel().getSelectedItem()));
+				rootAST.addChildNode(new RESTfulRequestAST(new EndPointRequest(endPointsView.getSelectionModel().getSelectedItem())));
 				tabPane.getSelectionModel().select(1);
 			}
 		});
