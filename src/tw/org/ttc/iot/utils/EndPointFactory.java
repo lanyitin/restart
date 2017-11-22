@@ -1,4 +1,4 @@
-package tw.org.ttc.iot;
+package tw.org.ttc.iot.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;

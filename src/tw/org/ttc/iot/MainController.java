@@ -1,6 +1,7 @@
 package tw.org.ttc.iot;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,10 +18,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import tw.org.ttc.iot.model.EndPoint;
 import tw.org.ttc.iot.model.Response;
+import tw.org.ttc.iot.utils.EndPointFactory;
 import tw.org.ttc.iot.view.EndPointCell;
 
 public class MainController {
@@ -116,10 +119,22 @@ public class MainController {
 
 	@FXML
 	private void onOpenMenuClicked() {
-		List<EndPoint> data = EndPointFactory.getEndPoints("http://petstore.swagger.io/v2/swagger.json");
-		endPoints.clear();
-		for (int i = 0; i < data.size(); i++) {
-			endPoints.add(data.get(i));
-		}
+		TextInputDialog dialog = new TextInputDialog("File Open");
+		dialog.setTitle("Open a Swagger config file");
+		dialog.setHeaderText(null);
+		dialog.setContentText("Please enter the url of swagger config file:");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+		
+
+		// The Java 8 way to get the response value (with lambda expression).
+		result.ifPresent(url -> {
+			List<EndPoint> data = EndPointFactory.getEndPoints(url);
+			endPoints.clear();
+			for (int i = 0; i < data.size(); i++) {
+				endPoints.add(data.get(i));
+			}
+		});
 	}	
 }
