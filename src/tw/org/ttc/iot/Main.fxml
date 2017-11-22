@@ -13,7 +13,7 @@
 	<left>
 		<AnchorPane BorderPane.alignment="CENTER">
 			<children>
-            <Accordion prefHeight="400.0" prefWidth="202.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Accordion fx:id="leftAccord" prefHeight="400.0" prefWidth="202.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <panes>
                 <TitledPane animated="false" text="Built-In Functions">
                   <content>
@@ -41,7 +41,7 @@
 	<center>
 		<AnchorPane BorderPane.alignment="CENTER">
 			<children>
-				<TabPane layoutX="14.0" layoutY="22.0" prefHeight="400.0" prefWidth="290.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+				<TabPane fx:id="tabPane" layoutX="14.0" layoutY="22.0" prefHeight="400.0" prefWidth="290.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 					<tabs>
 						<Tab text="API Info">
 							<content>
@@ -101,8 +101,17 @@
 				<Menu mnemonicParsing="false" text="File">
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#onOpenMenuClicked" text="Open" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveTestScript" text="Save Test Script" />
 					</items>
 				</Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#onUpClick" text="Up" />
+                <MenuItem mnemonicParsing="false" onAction="#onDownClick" text="Down" />
+                  <MenuItem mnemonicParsing="false" onAction="#onLeftClick" text="Left" />
+                  <MenuItem mnemonicParsing="false" onAction="#onRightClick" text="Right" />
+              </items>
+            </Menu>
 			</menus>
 		</MenuBar>
 	</top>

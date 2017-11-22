@@ -4,6 +4,7 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import tw.org.ttc.iot.utils.tasks.SleepTaskCfg;
 
 public class SleepAST implements AST {
 
@@ -31,4 +32,17 @@ public class SleepAST implements AST {
 	public String getTextForTreeCell() {
 		return String.format("Sleep for %s ms", this.duration.get());
 	}
+	
+	@Override
+	public boolean couldHaveChild() {
+		return false;
+	}
+
+	@Override
+	public Object toTestScript() {
+		SleepTaskCfg task = new SleepTaskCfg();
+		task.durationMs = this.getDuration();
+		return task;
+	}
+
 }

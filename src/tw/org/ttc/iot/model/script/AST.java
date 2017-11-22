@@ -6,4 +6,8 @@ public interface AST {
 	public ObservableList<AST> getChildNodes();
 
 	public String getTextForTreeCell();
+	
+	public boolean couldHaveChild();
+	
+	public Object toTestScript();
 }

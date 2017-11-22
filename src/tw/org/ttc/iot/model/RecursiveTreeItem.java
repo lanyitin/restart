@@ -15,15 +15,17 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
 
 	public RecursiveTreeItem(Callback<T, ObservableList<T>> func) {
 		this(null, func);
+		this.setExpanded(true);
 	}
 
 	public RecursiveTreeItem(final T value, Callback<T, ObservableList<T>> func) {
 		this(value, (Node) null, func);
+		this.setExpanded(true);
 	}
 
 	public RecursiveTreeItem(final T value, Node graphic, Callback<T, ObservableList<T>> func) {
 		super(value, graphic);
-
+		this.setExpanded(true);
 		this.childrenFactory = func;
 
 		if (value != null) {

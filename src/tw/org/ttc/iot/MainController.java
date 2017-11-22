@@ -8,9 +8,9 @@ import io.github.swagger2markup.builder.Swagger2MarkupConfigBuilder;
 import io.github.swagger2markup.markup.builder.MarkupLanguage;
 import io.swagger.models.parameters.Parameter;
 
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +22,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -49,6 +51,10 @@ import tw.org.ttc.iot.view.EndPointCell;
 import tw.org.ttc.iot.view.ScriptTreeCell;
 
 public class MainController {
+	@FXML
+	private Accordion leftAccord;
+	@FXML
+	private TabPane tabPane;
 	@FXML
 	private ListView<EndPoint> endPointsView;
 	@FXML
@@ -124,7 +130,7 @@ public class MainController {
 
 			@Override
 			public TreeCell<AST> call(TreeView<AST> arg0) {
-				return new ScriptTreeCell(arg0);
+				return new ScriptTreeCell();
 			}
 		});
 
@@ -139,12 +145,15 @@ public class MainController {
 				try {
 					rootAST.addChildNode(
 							functionMap.get(builtinFunctionsView.getSelectionModel().getSelectedItem()).call());
+					tabPane.getSelectionModel().select(1);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
+		
+		leftAccord.setExpandedPane(leftAccord.getPanes().get(0));
 	}
 
 	private void init_endpoint_detail_response_view() {
@@ -164,6 +173,7 @@ public class MainController {
 		endPointDetailParameterVendorExtension.setCellValueFactory(
 				new Callback<TableColumn.CellDataFeatures<Parameter, String>, ObservableValue<String>>() {
 
+					@SuppressWarnings("unchecked")
 					@Override
 					public ObservableValue<String> call(CellDataFeatures<Parameter, String> param) {
 						return new SimpleStringProperty(
@@ -188,6 +198,7 @@ public class MainController {
 					return;
 				}
 				rootAST.addChildNode(new RESTfulRequestAST(endPointsView.getSelectionModel().getSelectedItem()));
+				tabPane.getSelectionModel().select(1);
 			}
 		});
 		endPointsView.setItems(endPoints);
@@ -215,7 +226,7 @@ public class MainController {
 
 	@FXML
 	private void onOpenMenuClicked() {
-		TextInputDialog dialog = new TextInputDialog("File Open");
+		TextInputDialog dialog = new TextInputDialog("http://petstore.swagger.io/v2/swagger.json");
 		dialog.setTitle("Open a Swagger config file");
 		dialog.setHeaderText(null);
 		dialog.setContentText("Please enter the url of swagger config file:");
@@ -227,36 +238,101 @@ public class MainController {
 		result.ifPresent(url -> {
 			try {
 				Swagger2MarkupConfig config = new Swagger2MarkupConfigBuilder()
-			            .withMarkupLanguage(MarkupLanguage.ASCIIDOC)
-			            .withOutputLanguage(Language.ZH)
-			            .withPathsGroupedBy(GroupBy.TAGS)
-			            .withGeneratedExamples()
-			            .withoutInlineSchema()
-			            .build();
-			    Swagger2MarkupConverter converter;
-			    if (url.startsWith("http")) {
-			    	converter = Swagger2MarkupConverter.from((new URL(url)).toURI())
-				    		
-				            .withConfig(config)
-				            .build();
-			    } else {
-			    	converter = Swagger2MarkupConverter.from(Paths.get(url))
-				    		
-				            .withConfig(config)
-				            .build();
-			    }
-			    
-			    converter.toFile(Paths.get("build/swagger"));
+						.withMarkupLanguage(MarkupLanguage.ASCIIDOC).withOutputLanguage(Language.ZH)
+						.withPathsGroupedBy(GroupBy.TAGS).withGeneratedExamples().withoutInlineSchema().build();
+				Swagger2MarkupConverter converter;
+				if (url.startsWith("http")) {
+					converter = Swagger2MarkupConverter.from((new URL(url)).toURI()).withConfig(config).build();
+				} else {
+					converter = Swagger2MarkupConverter.from(Paths.get(url)).withConfig(config).build();
+				}
+
+				converter.toFile(Paths.get("build/swagger"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
+
 			List<EndPoint> data = EndPointFactory.getEndPoints(url);
 			endPoints.clear();
 			for (int i = 0; i < data.size(); i++) {
 				endPoints.add(data.get(i));
 			}
+			leftAccord.setExpandedPane(leftAccord.getPanes().get(1));
 		});
+	}
+
+	@FXML
+	private void onUpClick() {
+		TreeItem<AST> item = scriptView.getSelectionModel().getSelectedItem();
+		if (item == null) {
+			return;
+		}
+		if (item.getParent() != null && item.previousSibling() != null) {
+			ObservableList<AST> parent = item.getParent().getValue().getChildNodes();
+			System.out.println(parent);
+			List<AST> newList = new ArrayList<AST>(parent);
+			int idx = newList.indexOf(item.getValue());
+			newList.remove(item.getValue());
+			newList.add(idx - 1, item.getValue());
+			parent.clear();
+			parent.addAll(newList);
+			System.out.println(parent);
+		}
+	}
+
+	@FXML
+	private void onDownClick() {
+		TreeItem<AST> item = scriptView.getSelectionModel().getSelectedItem();
+		if (item == null) {
+			return;
+		}
+		if (item.getParent() != null && item.nextSibling() != null) {
+			ObservableList<AST> parent = item.getParent().getValue().getChildNodes();
+			System.out.println(parent);
+			List<AST> newList = new ArrayList<AST>(parent);
+			int idx = newList.indexOf(item.getValue());
+			newList.remove(item.getValue());
+			newList.add(idx + 1, item.getValue());
+			parent.clear();
+			parent.addAll(newList);
+			System.out.println(parent);
+		}
+	}
+
+	@FXML
+	private void onLeftClick() {
+		TreeItem<AST> item = scriptView.getSelectionModel().getSelectedItem();
+		if (item == null) {
+			return;
+		}
+
+		if (item.getParent() != null && item.getParent().getParent() != null) {
+			ObservableList<AST> parent = item.getParent().getValue().getChildNodes();
+			System.out.println(parent);
+			ObservableList<AST> grandparent = item.getParent().getParent().getValue().getChildNodes();
+			parent.remove(item.getValue());
+			grandparent.add(item.getValue());
+			System.out.println(parent);
+		}
+	}
+
+	@FXML
+	private void onRightClick() {
+		TreeItem<AST> item = scriptView.getSelectionModel().getSelectedItem();
+		if (item == null) {
+			return;
+		}
+		TreeItem<AST> previousSiblingNode = item.previousSibling();
+		if (previousSiblingNode != null && previousSiblingNode.getValue().couldHaveChild()) {
+			AST target = previousSiblingNode.getValue();
+			item.getParent().getValue().getChildNodes().remove(item.getValue());
+			target.getChildNodes().add(item.getValue());
+			previousSiblingNode.setExpanded(true);
+		}
+	}
+	
+	@FXML
+	private void saveTestScript() {
+		System.out.println(rootAST.toTestScript());
 	}
 }

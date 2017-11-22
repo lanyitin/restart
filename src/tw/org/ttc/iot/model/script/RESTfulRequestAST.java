@@ -23,4 +23,15 @@ public class RESTfulRequestAST implements AST {
 	public String getTextForTreeCell() {
 		return String.format("%s %s", endPoint.getMethod(), endPoint.getUrl());
 	}
+	
+	@Override
+	public boolean couldHaveChild() {
+		return false;
+	}
+
+	@Override
+	public Object toTestScript() {
+		return this;
+	}
+
 }

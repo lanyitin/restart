@@ -8,7 +8,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DataFormat;
@@ -20,11 +19,9 @@ import tw.org.ttc.iot.model.script.RESTfulRequestAST;
 import tw.org.ttc.iot.model.script.SleepAST;
 
 public class ScriptTreeCell extends TreeCell<AST> {
-	private final TreeView<AST> rootView;
 
-	public ScriptTreeCell(TreeView<AST> root) {
+	public ScriptTreeCell() {
 		super();
-		this.rootView = root;
 		setOnDragDetected(e -> {
 			System.out.println(String.format("Drag Detected %d", getIndex()));
 			Dragboard db = startDragAndDrop(TransferMode.MOVE);
@@ -76,8 +73,8 @@ public class ScriptTreeCell extends TreeCell<AST> {
 
 					@Override
 					public void handle(ActionEvent event) {
-						ScriptTreeCell.this.getTreeItem().getParent().getChildren()
-								.remove(ScriptTreeCell.this.getTreeItem());
+						ScriptTreeCell.this.getTreeItem().getParent().getValue().getChildNodes()
+								.remove(ScriptTreeCell.this.getTreeItem().getValue());
 					}
 				});
 				contextMenu.getItems().add(item1);
