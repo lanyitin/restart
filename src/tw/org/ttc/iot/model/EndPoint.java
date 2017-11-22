@@ -16,15 +16,15 @@ public class EndPoint {
 		this.url = new SimpleStringProperty(url);
 		this.operation = new SimpleObjectProperty<Operation>(operation);
 	}
-	
+
 	public String getMethod() {
 		return method.get();
 	}
-	
+
 	public String getUrl() {
 		return url.get();
 	}
-	
+
 	public Operation getOperation() {
 		return operation.get();
 	}

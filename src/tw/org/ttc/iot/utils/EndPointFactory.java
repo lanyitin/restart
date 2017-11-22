@@ -13,9 +13,10 @@ import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import tw.org.ttc.iot.model.EndPoint;
 
-
 public class EndPointFactory {
-	private EndPointFactory() {}
+	private EndPointFactory() {
+	}
+
 	public static List<EndPoint> getEndPoints(String path) {
 		Swagger swagger = new SwaggerParser().read(path);
 		return find_endpoints(swagger);

@@ -10,7 +10,7 @@ public class EndPointCell extends ListCell<EndPoint> {
 		// TODO Auto-generated method stub
 		super.updateItem(item, empty);
 		if (empty || item == null) {
-			
+
 		} else {
 			this.setText(String.format("%s %s", item.getMethod(), item.getUrl()));
 		}
