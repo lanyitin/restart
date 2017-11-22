@@ -1,6 +1,16 @@
 package tw.org.ttc.iot;
 
+import io.github.swagger2markup.GroupBy;
+import io.github.swagger2markup.Language;
+import io.github.swagger2markup.Swagger2MarkupConfig;
+import io.github.swagger2markup.Swagger2MarkupConverter;
+import io.github.swagger2markup.builder.Swagger2MarkupConfigBuilder;
+import io.github.swagger2markup.markup.builder.MarkupLanguage;
 import io.swagger.models.parameters.Parameter;
+
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -114,7 +124,7 @@ public class MainController {
 
 			@Override
 			public TreeCell<AST> call(TreeView<AST> arg0) {
-				return new ScriptTreeCell();
+				return new ScriptTreeCell(arg0);
 			}
 		});
 
@@ -215,6 +225,33 @@ public class MainController {
 
 		// The Java 8 way to get the response value (with lambda expression).
 		result.ifPresent(url -> {
+			try {
+				Swagger2MarkupConfig config = new Swagger2MarkupConfigBuilder()
+			            .withMarkupLanguage(MarkupLanguage.ASCIIDOC)
+			            .withOutputLanguage(Language.ZH)
+			            .withPathsGroupedBy(GroupBy.TAGS)
+			            .withGeneratedExamples()
+			            .withoutInlineSchema()
+			            .build();
+			    Swagger2MarkupConverter converter;
+			    if (url.startsWith("http")) {
+			    	converter = Swagger2MarkupConverter.from((new URL(url)).toURI())
+				    		
+				            .withConfig(config)
+				            .build();
+			    } else {
+			    	converter = Swagger2MarkupConverter.from(Paths.get(url))
+				    		
+				            .withConfig(config)
+				            .build();
+			    }
+			    
+			    converter.toFile(Paths.get("build/swagger"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
 			List<EndPoint> data = EndPointFactory.getEndPoints(url);
 			endPoints.clear();
 			for (int i = 0; i < data.size(); i++) {

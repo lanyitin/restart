@@ -29,6 +29,6 @@ public class SleepAST implements AST {
 
 	@Override
 	public String getTextForTreeCell() {
-		return String.format("Sleep for %s ms", this.duration);
+		return String.format("Sleep for %s ms", this.duration.get());
 	}
 }

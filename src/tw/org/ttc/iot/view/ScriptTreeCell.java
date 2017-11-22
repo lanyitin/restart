@@ -8,15 +8,55 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import tw.org.ttc.iot.model.script.AST;
 import tw.org.ttc.iot.model.script.LoopAST;
 import tw.org.ttc.iot.model.script.RESTfulRequestAST;
 import tw.org.ttc.iot.model.script.SleepAST;
 
 public class ScriptTreeCell extends TreeCell<AST> {
-	public ScriptTreeCell() {
+	private final TreeView<AST> rootView;
+
+	public ScriptTreeCell(TreeView<AST> root) {
 		super();
+		this.rootView = root;
+		setOnDragDetected(e -> {
+			System.out.println(String.format("Drag Detected %d", getIndex()));
+			Dragboard db = startDragAndDrop(TransferMode.MOVE);
+			ClipboardContent content = new ClipboardContent();
+			content.put(DataFormat.PLAIN_TEXT, getItem().getTextForTreeCell());
+			db.setContent(content);
+			e.consume();
+		});
+		setOnDragDone(e -> {
+			System.out.println(String.format("Drag Done %d", getIndex()));
+			e.consume();
+		});
+		setOnDragDropped(e -> {
+			System.out.println(String.format("Drag Dropped %d", getIndex()));
+			e.setDropCompleted(true);
+			e.consume();
+		});
+		setOnDragEntered(e -> {
+			setText(e.getDragboard().getString());
+			System.out.println(String.format("Drag Entered %d", getIndex()));
+			e.consume();
+		});
+		setOnDragExited(e -> {
+			setText(getItem().getTextForTreeCell());
+			System.out.println(String.format("Drag Exit %d", getIndex()));
+			e.consume();
+		});
+		setOnDragOver(e -> {
+			e.acceptTransferModes(TransferMode.ANY);
+			System.out.println(String.format("Drag Over %d", getIndex()));
+			e.consume();
+		});
 	}
 
 	@Override
