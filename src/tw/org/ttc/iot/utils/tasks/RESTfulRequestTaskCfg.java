@@ -1,15 +1,15 @@
 package tw.org.ttc.iot.utils.tasks;
 
-import com.google.gson.JsonObject;
+import tw.pllab.probelib.TaskCfg;
 
-public class RESTfulRequestTaskCfg {
+public class RESTfulRequestTaskCfg extends TaskCfg {
 	public String url;
 	public String method;
-	public JsonObject header;
-	public JsonObject body;
+	public String header;
+	public String body;
 
 	@Override
 	public String toString() {
-		return String.format("%s %s %s", method, url, body.toString());
+		return String.format("%s %s\n %s\n", method, url, body);
 	}
 }

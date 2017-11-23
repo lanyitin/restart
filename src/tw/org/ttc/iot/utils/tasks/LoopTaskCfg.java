@@ -1,9 +1,8 @@
 package tw.org.ttc.iot.utils.tasks;
 
-//import tw.pllab.probelib.TaskCfg;
+import tw.pllab.probelib.TaskCfg;
 
-//public class ForLoopTaskCfg extends TaskCfg {
-public class LoopTaskCfg {
+public class LoopTaskCfg extends TaskCfg {
 	public int iterationCount;
 	public Object bodyTask;
 	

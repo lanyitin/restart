@@ -2,7 +2,6 @@ package tw.org.ttc.iot.view;
 
 import java.util.Optional;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
 import javafx.event.ActionEvent;
@@ -11,11 +10,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeCell;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import tw.org.ttc.iot.model.script.AST;
 import tw.org.ttc.iot.model.script.LoopAST;
 import tw.org.ttc.iot.model.script.RESTfulRequestAST;
@@ -97,8 +92,8 @@ public class ScriptTreeCell extends TreeCell<AST> {
 							@Override
 							public void handle(ActionEvent event) {
 								String content = "";
-								if (ast_item.getRequest().getParameters() != null) {
-									content = ast_item.getRequest().getParameters().toString();
+								if (ast_item.getRequest().getArguments() != null) {
+									content = ast_item.getRequest().getArguments().toString();
 								}
 								TextInputDialog dialog = new TextInputDialog(content);
 								dialog.setTitle("the parameters:");
@@ -108,7 +103,7 @@ public class ScriptTreeCell extends TreeCell<AST> {
 								Optional<String> result = dialog.showAndWait();
 								if (result.isPresent()) {
 									JsonParser gson = new JsonParser();
-									ast_item.getRequest().setParameters(gson.parse(result.get()).getAsJsonObject());
+									ast_item.getRequest().setArguments(gson.parse(result.get()).getAsJsonObject());
 									setText(item.getTextForTreeCell());
 								}
 							}

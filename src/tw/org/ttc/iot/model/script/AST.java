@@ -1,6 +1,7 @@
 package tw.org.ttc.iot.model.script;
 
 import javafx.collections.ObservableList;
+import tw.pllab.probelib.TaskCfg;
 
 public interface AST {
 	public ObservableList<AST> getChildNodes();
@@ -9,5 +10,5 @@ public interface AST {
 	
 	public boolean couldHaveChild();
 	
-	public Object toTestScript();
+	public TaskCfg toTestScript();
 }

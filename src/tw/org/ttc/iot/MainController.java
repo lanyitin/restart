@@ -38,6 +38,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.gson.Gson;
+
 import tw.org.ttc.iot.model.EndPoint;
 import tw.org.ttc.iot.model.EndPointRequest;
 import tw.org.ttc.iot.model.RecursiveTreeItem;
@@ -334,6 +337,6 @@ public class MainController {
 	
 	@FXML
 	private void saveTestScript() {
-		System.out.println(rootAST.toTestScript());
+		System.out.println((new Gson()).toJson(rootAST.toTestScript()));
 	}
 }

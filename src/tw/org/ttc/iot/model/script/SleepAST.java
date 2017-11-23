@@ -39,7 +39,7 @@ public class SleepAST implements AST {
 	}
 
 	@Override
-	public Object toTestScript() {
+	public SleepTaskCfg toTestScript() {
 		SleepTaskCfg task = new SleepTaskCfg();
 		task.durationMs = this.getDuration();
 		return task;

@@ -1,14 +1,11 @@
 package tw.org.ttc.iot.model.script;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonObject;
 
 import io.swagger.models.parameters.Parameter;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import tw.org.ttc.iot.model.EndPointRequest;
@@ -31,17 +28,8 @@ public class RESTfulRequestAST implements AST {
 
 	@Override
 	public String getTextForTreeCell() {
-		StringProperty url = new SimpleStringProperty(this.request.getEndPoint().getUrl());
 		List<Parameter> params = this.request.getEndPoint().getOperation().getParameters();
-		Stream<Parameter> filtered = params.stream()
-				.filter(x -> x.getIn().equals("path")
-						&& this.request.getParameters().keySet().contains(x.getName()));
-		filtered.forEach((x) -> {
-			System.out.println(x.getName());
-			url.set(url.get().replaceAll(String.format("\\{%s\\}", x.getName()),
-					this.request.getParameters().get(x.getName()).getAsString()));
-		});
-		return String.format("%s %s", this.getRequest().getEndPoint().getMethod(), url.get());
+		return String.format("%s %s", this.getRequest().getEndPoint().getMethod(), renderUrl(this.request.getEndPoint().getUrl(), params.stream(), this.request.getArguments()));
 	}
 
 	@Override
@@ -54,25 +42,30 @@ public class RESTfulRequestAST implements AST {
 	}
 
 	@Override
-	public Object toTestScript() {
+	public RESTfulRequestTaskCfg toTestScript() {
 		RESTfulRequestTaskCfg cfg = new RESTfulRequestTaskCfg();
 		cfg.method = this.request.getEndPoint().getMethod();
-		StringProperty url = new SimpleStringProperty(this.request.getEndPoint().getUrl());
+
 		List<Parameter> params = this.request.getEndPoint().getOperation().getParameters();
-		Stream<Parameter> filtered = params.stream()
-				.filter(x -> x.getIn().equals("path") && this.request.getParameters().keySet().contains(x.getName()));
-		filtered.forEach((x) -> {
-			url.set(url.get().replaceAll(String.format("\\{%s\\}", x.getName()),
-					this.request.getParameters().get(x.getName()).getAsString()));
-		});
-		cfg.url = url.get();
+		cfg.url = renderUrl(this.request.getEndPoint().getUrl(), params.stream(), this.request.getArguments());
+		
 		JsonObject body = new JsonObject();
-		this.request.getEndPoint().getOperation().getParameters().stream().filter(x -> x.getIn().equals("body"))
-				.forEach((x) -> {
-					body.addProperty(x.getName(), this.request.getParameters().get(x.getName()).getAsString());
-				});
-		cfg.body = body;
+		filterParametersByInAndArguments("body", params.stream(), this.request.getArguments())
+			.forEach(p -> body.addProperty(p.getName(), this.request.getArguments().get(p.getName()).getAsString()));
+		cfg.body = body.toString();
 		return cfg;
 	}
+	
+	String renderUrl(String url, Stream<Parameter> param, JsonObject arguments) {
+		return filterParametersByInAndArguments("path", param, arguments)
+			.reduce(url,
+					(String u, Parameter p) -> {
+						return u.replace("{" + p.getName() +"}", arguments.get(p.getName()).getAsString());
+					}, (x, y) -> x);
+	}
 
+	private Stream<Parameter> filterParametersByInAndArguments(String in, Stream<Parameter> param, JsonObject arguments) {
+		return param.filter(x -> x.getIn().equals(in))
+			.filter(x -> arguments.has(x.getName()));
+	}
 }

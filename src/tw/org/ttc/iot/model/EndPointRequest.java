@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 
 public class EndPointRequest {
 	private final EndPoint endPoint;
-	private JsonObject parameters;
+	private JsonObject arguments;
 
 	public EndPointRequest (EndPoint endPoint) {
 		this.endPoint = endPoint;
@@ -14,14 +14,14 @@ public class EndPointRequest {
 		return this.endPoint;
 	}
 	
-	public void setParameters(JsonObject params) {
-		this.parameters = params;
+	public void setArguments(JsonObject params) {
+		this.arguments = params;
 	}
 	
-	public JsonObject getParameters() {
-		if (this.parameters == null) {
-			return new JsonObject();
+	public JsonObject getArguments() {
+		if (this.arguments == null) {
+			this.arguments = new JsonObject();
 		}
-		return this.parameters;
+		return this.arguments;
 	}
 }

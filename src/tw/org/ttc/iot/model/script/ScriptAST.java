@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import tw.pllab.probelib.task.SequentialCfg;
 
 public class ScriptAST implements AST {
 	private final ObservableList<AST> childNodes;
@@ -32,8 +33,10 @@ public class ScriptAST implements AST {
 	}
 
 	@Override
-	public Object toTestScript() {
-		return this.getChildNodes().stream().map(AST::toTestScript).collect(Collectors.toList());
+	public SequentialCfg toTestScript() {
+		SequentialCfg cfg = new SequentialCfg();
+		cfg.setCfgList(this.getChildNodes().stream().map(AST::toTestScript).collect(Collectors.toList()));
+		return cfg;
 	}
 
 }

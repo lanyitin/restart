@@ -47,7 +47,7 @@ public class LoopAST implements AST {
 	}
 
 	@Override
-	public Object toTestScript() {
+	public LoopTaskCfg toTestScript() {
 		LoopTaskCfg task = new LoopTaskCfg();
 		task.iterationCount = this.getCount();
 		task.bodyTask = this.getChildNodes().stream().map(AST::toTestScript).collect(Collectors.toList());
